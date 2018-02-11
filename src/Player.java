@@ -21,7 +21,8 @@ public class Player {
     }
 
     private void setEquipment() {
-        equipped.put("MainHand", Weapon.starter);
+
+        equipped.put("MainHand", null);
     }
 
     private void setStats() {
@@ -35,15 +36,23 @@ public class Player {
 
 
     public boolean equip(Equipment e, boolean fromInv){
-        this.tempEquip.add(this.equipped.get(e.type));
+        if (this.equipped.get(e.type) != null) {
+            this.tempEquip.add(this.equipped.get(e.type));
+        } else {
+            this.tempEquip.clear();
+        }
         this.equipped.replace(e.type, e);
         addStats(e);
-        removeStats(tempEquip.get(0));
+        if (tempEquip.size() >  0) {
+            removeStats(tempEquip.get(0));
+        }
         if(fromInv){
             Inventory.removeFromInv(e);
         }
-        if(!Inventory.addToInv(tempEquip.get(0))){
-            System.out.println("Full inventory on equip");
+        if (this.tempEquip.size() > 0) {
+            if(!Inventory.addToInv(tempEquip.get(0))){
+                System.out.println("Full inventory on equip");
+            }
         }
         tempEquip.clear();
         return true;
@@ -51,7 +60,9 @@ public class Player {
 
     private void addStats(Equipment equipment){
         for(String s: equipment.stats.keySet()){
-            changeStat(s , equipment.stats.get(s));
+            if (equipment.getStat(s) !=  0) {
+                changeStat(s , equipment.stats.get(s));
+            }
         }
     }
 
@@ -63,5 +74,12 @@ public class Player {
         for(String s: equipment.stats.keySet()){
             this.stats.replace(s, this.stats.get(s),this.stats.get(s) - equipment.getStat(s));
         }
+    }
+
+    public boolean unEquip(String item) {
+        if(equipped.get(item).equals(null)) return false;
+        Inventory.addToInv(equipped.get(item));
+        equipped.replace(item, null);
+        return true;
     }
 }

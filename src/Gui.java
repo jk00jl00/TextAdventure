@@ -23,9 +23,11 @@ public class Gui extends JFrame{
     private JTextPane options;
     public boolean isWaiting;
     private ArrayList<String> waitingStrings;
+    private String inven;
+    private String[] eventsBackUp;
 
     public Gui(){
-        super();
+        super("Text Adventure");
         frame = this;
 
         for(int i = 0; i < numberOfRowsInEventLog; i++){
@@ -239,14 +241,18 @@ public class Gui extends JFrame{
             e.printStackTrace();
         }
 
-        for(String a : events){
-            if(a.equals(spacesFromTop)) continue;
-            try {
-                eventLog.getStyledDocument().insertString(eventLog.getStyledDocument().getLength(), a, keySet);
+        try {
+            for(String a : events){
+                if(a.equals(spacesFromTop)) continue;
+                try {
+                    eventLog.getStyledDocument().insertString(eventLog.getStyledDocument().getLength(), a, keySet);
 
-            } catch (BadLocationException e) {
-                e.printStackTrace();
+                } catch (BadLocationException e) {
+                    e.printStackTrace();
+                }
             }
+        } catch (java.lang.NullPointerException e) {
+            e.printStackTrace();
         }
     }
 
@@ -259,6 +265,7 @@ public class Gui extends JFrame{
         for(int i = 0; i < numberOfRowsInEventLog; i++){
             events[i] = " \n";
         }
+        return;
     }
 
     public void clearInput() {
@@ -349,5 +356,18 @@ public class Gui extends JFrame{
             }
             waitingStrings.clear();
         }
+    }
+
+    public void enterInven() {
+        eventsBackUp = events;
+        events = Inventory.invToStringArray();
+        updateEventLog();
+        return;
+    }
+
+
+    public void exitInve() {
+        events = eventsBackUp;
+        updateEventLog();
     }
 }

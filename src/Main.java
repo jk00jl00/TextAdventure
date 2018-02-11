@@ -1,6 +1,5 @@
 import javax.swing.*;
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -8,6 +7,8 @@ public class Main implements InteractionListener {
     Player player;
     Room[] rooms;
     Gui gui;
+
+    private boolean inInv = false;
     private Interacteble inFocus;
     int floor;
     public String iObj = "door|table|chest";
@@ -129,29 +130,45 @@ public class Main implements InteractionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            String text = gui.getInputText().toUpperCase();
-
             if (gui.isWaiting) {
                 gui.waitOver();
                 return;
+            } else if(inInv){
+                //invActions
+                gui.exitInve();
+                inInv = false;
+                gui.clearInput();
+                return;
             }
-            //Interacting
-            Matcher matcher = Pattern.compile("\\binter|\\buse|\\bopen|\\binspe|\\blook|\\bpick\\sup\\b|\\bequip|\\binven|\\bbag", Pattern.CASE_INSENSITIVE).matcher(text);
-            matcher.find();
 
-            switch (matcher.group()){
+            String text = gui.getInputText();
+            //Interacting
+            Matcher matcher = Pattern.compile(
+                    "\\binter|\\buse\\b|\\bopen|\\binspe|\\blook|\\bpick\\sup\\b|\\bequip\\b|\\binven|\\bbag|\\bunequip|\\btake\\soff|" +
+                    "\\bgrab\\b|\\benter\\b|\\bopen\\b", Pattern.CASE_INSENSITIVE).matcher(text);
+            if(!matcher.find()){
+                System.out.println("No match for base word");
+                return;
+            }
+
+            switch (matcher.group().toUpperCase()){
                 case "INTER":
                 case "USE":
-                    System.out.println(1);
                     Matcher mO = Pattern.compile(iObj, Pattern.CASE_INSENSITIVE).matcher(text);
-                    Matcher mD = Pattern.compile("\\bN\\b|\\bE\\b|\\bS\\b|\\bW\\b|NORTH|EAST|SOUTH|WEST", Pattern.CASE_INSENSITIVE).matcher(text);
-                    mO.find();
-                    mD.find();
-                    switch (mO.group()) {
+                    if(!mO.find()){
+                        System.out.println("No match for object when interacting");
+                        return;
+                    }
+                    switch (mO.group().toUpperCase()) {
                         case "DOOR":
                             //When interacting with a door
-                            char dir = 'N';
-                            switch (mD.group()) {
+                            Matcher mD = Pattern.compile("\\bN\\b|\\bE\\b|\\bS\\b|\\bW\\b|NORTH|EAST|SOUTH|WEST", Pattern.CASE_INSENSITIVE).matcher(text);
+                            if(!mD.find()){
+                                System.out.println("No match for direction when interaction with door");
+                                return;
+                            }
+                            char dir;
+                            switch (mD.group().toUpperCase()) {
                                 case "NORTH":
                                     dir = 'N';
                                     break;
@@ -203,18 +220,88 @@ public class Main implements InteractionListener {
                                     inFocus = i;
                                 }
                             }
-
                     }
                     gui.clearInput();
                     break;
                 case "LOOK":
                 case "INSPE":
+                    if(text.toLowerCase().matches(iObj)){
+
+                    }
                     break;
+                case "ENTER":
+                    //When interacting with a door
+                    Matcher mD = Pattern.compile("\\bN\\b|\\bE\\b|\\bS\\b|\\bW\\b|NORTH|EAST|SOUTH|WEST", Pattern.CASE_INSENSITIVE).matcher(text);
+                    if (!mD.find()) {
+                        System.out.println("No match for direction when interaction with door");
+                        return;
+                    }
+                    char dir;
+                    switch (mD.group().toUpperCase()) {
+                        case "NORTH":
+                            dir = 'N';
+                            break;
+                        case "N":
+                            dir = 'N';
+                            break;
+                        case "EAST":
+                            dir = 'E';
+                            break;
+                        case "E":
+                            dir = 'E';
+                            break;
+                        case "SOUTH":
+                            dir = 'S';
+                            break;
+                        case "S":
+                            dir = 'S';
+                            break;
+                        case "WEST":
+                            dir = 'W';
+                            break;
+                        case "W":
+                            dir = 'W';
+                            break;
+                        default:
+                            dir = 'N';
+                    }
+                    for (Door d : player.inside.doors) {
+                        if (d.dirInRoomOne == dir && d.connects[0].equals(player.inside)) {
+                            System.out.println(0);
+                            d.interaction();
+                            break;
+                        } else if (d.dirInRoomTwo == dir && d.connects[1].equals(player.inside)) {
+                            System.out.println(500);
+                            d.interaction();
+                            break;
+                        }
+                    }
+                    break;
+                case "OPEN":
+                    Matcher mOpen = Pattern.compile("chest", Pattern.CASE_INSENSITIVE).matcher(text);
+                    if(!mOpen.find()){
+                        System.out.println("No match for object to open");
+                        return;
+                    }
+                    switch (mOpen.group().toUpperCase()) {
+                        case "CHEST":
+                            for (Interacteble i : player.inside.interactebles) {
+                                if (i.id == 'C') {
+                                    i.interaction();
+                                    inFocus = i;
+                                }
+                            }
+                    }
+                    break;
+                case "GRAB":
                 case "PICK UP":
                     if(inFocus != null){
                         Matcher m = Pattern.compile("GOLD|SWORD", Pattern.CASE_INSENSITIVE).matcher(text);
-                        m.find();
-                        if(m.group().equals("GOLD") && inFocus.items.size() != 0){
+                        if(!m.find()){
+                            System.out.println("No match when trying to Pick up");
+                            return;
+                        }
+                        if(m.group().toUpperCase().equals("GOLD") && inFocus.items.size() != 0){
                             Gold g = new Gold(0);
                             for(Item i : inFocus.items){
                                 if(i.description.toUpperCase().contains("GOLD")){
@@ -226,7 +313,7 @@ public class Main implements InteractionListener {
                             inFocus.items.remove(g);
                         } else if(inFocus.items.size() != 0){
                             for(Item i: inFocus.items){
-                                if(i.description.toUpperCase().contains(m.group())){
+                                if(i.description.toUpperCase().contains(m.group().toUpperCase())){
                                     if(Inventory.addToInv(i)){
                                         gui.addToEvents("You picked up " + i.description);
                                     }
@@ -236,28 +323,45 @@ public class Main implements InteractionListener {
                             }
                         }
                     }
+                    gui.clearInput();
                     break;
                 case "EQUIP":
                     if (Inventory.getSize() > 0) {
-                        Matcher iI = Pattern.compile("SWORD", Pattern.CASE_INSENSITIVE).matcher(text);
-                        Matcher eS = Pattern.compile("MainHand", Pattern.CASE_INSENSITIVE).matcher(text);
-                        if (!iI.find()) return;
-                        eS.find();
-                        for(Item i : Inventory.getItems()){
-                            if(i.description.toUpperCase().contains(iI.group())){
-                                if(player.equip((Equipment)i, true)){
-                                    gui.changeStats(player.stats);
-                                    gui.addToEvents("You equipped " + i.description);
-                                }
+                        Matcher iI = Pattern.compile("[1-9]", Pattern.CASE_INSENSITIVE).matcher(text);
+                        if (!iI.find()) {
+                            System.out.println("No match when trying to Equip");
+                            return;
+                        }
+                        try {
+                            Item i = Inventory.getItem(Integer.parseInt(iI.group()) - 1);
+                            if(player.equip((Equipment)Inventory.getItem(Integer.parseInt(iI.group()) - 1), true)){
+                                gui.addToEvents("You equipped " + i.description);
+                                gui.changeStats(player.stats);
                             }
+                        } catch (IndexOutOfBoundsException e1) {
+                            e1.printStackTrace();
                         }
                     }
                     break;
                 case "INVE":
                 case "BAG":
-                    break;
+                    inInv = true;
+                    gui.enterInven();
+                    gui.clearInput();
+                    return;
+                case "UNEQUIP":
+                case "TAKE OFF":
+                    Matcher eS = Pattern.compile("MainHand", Pattern.CASE_INSENSITIVE).matcher(text);
+                    if(!eS.find()){
+                        System.out.println("No match when trying to unequip");
+                        return;
+                    }
+                    if(player.unEquip(eS.group())){
+                        gui.addToEvents("Unequipped main hand weapon");
+                    }
 
             }
+            gui.clearInput();
         }
 
 
