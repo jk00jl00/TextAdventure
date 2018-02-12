@@ -1,4 +1,6 @@
-public class Gold extends Item{
+package ItemsPackage;
+
+public class Gold extends Item {
 
 
     public static Gold playerGold = new Gold(10);

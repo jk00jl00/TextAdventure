@@ -1,8 +1,12 @@
-public class Door extends Interacteble {
-    Room[] connects = new Room[2];
+package InteracteblesPackage;
 
-    char dirInRoomOne;
-    char dirInRoomTwo;
+import InteracteblesPackage.Interacteble;
+
+public class Door extends Interacteble {
+    public Room[] connects = new Room[2];
+
+    public char dirInRoomOne;
+    public char dirInRoomTwo;
 
     public Door(Room prevRoom, Room r, char dirRomOne){
         this.connects[0] = prevRoom;

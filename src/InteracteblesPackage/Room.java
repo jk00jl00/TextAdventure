@@ -1,4 +1,8 @@
-import java.lang.reflect.Array;
+package InteracteblesPackage;
+
+import InteracteblesPackage.Door;
+import InteracteblesPackage.Interacteble;
+
 import java.util.ArrayList;
 
 public class Room{
@@ -12,9 +16,9 @@ public class Room{
 
     public ArrayList<String> description = new ArrayList<>();
 
-    ArrayList<Door> doors = new ArrayList<>();
+    public ArrayList<Door> doors = new ArrayList<>();
 
-    ArrayList<Interacteble> interactebles = new ArrayList<>();
+    public ArrayList<Interacteble> interactebles = new ArrayList<>();
 
 
     public Room(int x, int y, int fl, int dis, int rn){
@@ -41,7 +45,13 @@ public class Room{
         String s = new String("");
         s += "Room " + this.roomNumber + " at " + "x: " + this.x + ",  y: " + this.y + ", Distance: " + this.distance + ".\n";
         for(int i = 0; i < doors.size(); i++){
-            s += "Door " + i + ": dir in 1: " + doors.get(i).dirInRoomOne + "(" + doors.get(i).connects[0].roomNumber + ")" +", in 2: " + doors.get(i).dirInRoomTwo + "(" + doors.get(i).connects[1].roomNumber + ")" + ".\n";
+            s += "Door " + i + ": dir in 1: " + doors.get(i).dirInRoomOne + "(" + doors.get(i).connects[0].roomNumber + ")"
+                    +", in 2: " + doors.get(i).dirInRoomTwo + "(" + doors.get(i).connects[1].roomNumber + ")" + ".\n";
+        }
+        if(this.interactebles.size() > 0){
+            for(Interacteble i: this.interactebles){
+                s += i.id;
+            }
         }
         s += "\n";
         return s;

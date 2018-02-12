@@ -1,3 +1,9 @@
+package InteracteblesPackage;
+
+import InteracteblesPackage.Chest;
+import InteracteblesPackage.Door;
+import InteracteblesPackage.Table;
+
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 

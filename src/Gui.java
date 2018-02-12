@@ -1,3 +1,5 @@
+import InteracteblesPackage.Room;
+
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
@@ -17,7 +19,7 @@ public class Gui extends JFrame{
     private JTextPane playerInput;
     private JTextPane eventLog;
     private String[] events = new String[numberOfRowsInEventLog];
-    private JTextPane inventory;
+    private JTextPane roomInteractebles;
     private JTextPane enemyStats;
     private JTextPane map;
     private JTextPane options;
@@ -96,23 +98,23 @@ public class Gui extends JFrame{
         frame.add(eventLog, gbc);
         gbc = new GridBagConstraints();
 
-        inventory = new JTextPane();
+        roomInteractebles = new JTextPane();
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.gridheight = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        inventory.setPreferredSize(new Dimension(280,180));
-        inventory.setFocusable(false);
-        inventory.setBackground(Color.DARK_GRAY);
-        inventory.setForeground(Color.LIGHT_GRAY);
-        inventory.setBorder(BorderFactory.createBevelBorder(0));
-        inventory.setAlignmentX(CENTER_ALIGNMENT);
+        roomInteractebles.setPreferredSize(new Dimension(280,180));
+        roomInteractebles.setFocusable(false);
+        roomInteractebles.setBackground(Color.DARK_GRAY);
+        roomInteractebles.setForeground(Color.LIGHT_GRAY);
+        roomInteractebles.setBorder(BorderFactory.createBevelBorder(0));
+        roomInteractebles.setAlignmentX(CENTER_ALIGNMENT);
 
-        StyledDocument inventoryDoc = inventory.getStyledDocument();
+        StyledDocument inventoryDoc = roomInteractebles.getStyledDocument();
         inventoryDoc.setParagraphAttributes(0, inventoryDoc.getLength(), keySet, false);
 
-        frame.add(inventory, gbc);
+        frame.add(roomInteractebles, gbc);
         gbc = new GridBagConstraints();
 
         playerInput = new JTextPane(new DefaultStyledDocument() {

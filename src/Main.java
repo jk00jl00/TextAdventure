@@ -1,3 +1,8 @@
+import InteracteblesPackage.*;
+import ItemsPackage.Equipment;
+import ItemsPackage.Gold;
+import ItemsPackage.Item;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.util.regex.Matcher;
@@ -15,7 +20,6 @@ public class Main implements InteractionListener {
 
     public Main() {
         floor = -1;
-        int roomCount = 1;
         gui = new Gui();
         changeEnterAction();
         gui.setDefaultText();
@@ -83,6 +87,7 @@ public class Main implements InteractionListener {
         for (String s : r.description) {
             gui.addToEvents(s);
         }
+        System.out.println(r.toString());
     }
 
     @Override

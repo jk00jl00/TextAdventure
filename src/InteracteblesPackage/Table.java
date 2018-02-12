@@ -1,7 +1,11 @@
+package InteracteblesPackage;
+
+import InteracteblesPackage.Interacteble;
+
 public class Table extends Interacteble {
 
 
-    public Table(int fl, int deapth){
+    Table(int fl, int deapth){
         this.id = 'T';
     }
 

@@ -1,19 +1,20 @@
+import InteracteblesPackage.Room;
+import ItemsPackage.Equipment;
+import ItemsPackage.Gold;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Player {
 
-    Room inside;
+    public Room inside;
 
     ArrayList<Equipment> tempEquip = new ArrayList<>();
     Map<String, Equipment> equipped = new HashMap<>();
     public Map<String, Integer> stats = new HashMap<>();
 
     public Gold gold = Gold.playerGold;
-
-    private static int invMaxSize = 10;
-
 
     public Player(){
         this.setStats();

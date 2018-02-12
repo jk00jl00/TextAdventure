@@ -1,10 +1,14 @@
+package ItemsPackage;
+
+import ItemsPackage.Item;
+
 import java.util.HashMap;
 import java.util.Map;
 
-public class Equipment extends Item{
+public class Equipment extends Item {
 
-    Map<String, Integer> stats = new HashMap<>();
-    String type;
+    public Map<String, Integer> stats = new HashMap<>();
+    public String type;
 
     public Equipment(){
 

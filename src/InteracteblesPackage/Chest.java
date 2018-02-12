@@ -1,6 +1,13 @@
+package InteracteblesPackage;
+
+import InteracteblesPackage.InteractbleStrings;
+import InteracteblesPackage.Interacteble;
+import ItemsPackage.Gold;
+import ItemsPackage.Weapon;
+
 import java.util.concurrent.ThreadLocalRandom;
 
-public class Chest extends Interacteble{
+public class Chest extends Interacteble {
     public boolean isOpen = false;
     private String inspectionString;
     private int qual;
@@ -23,7 +30,7 @@ public class Chest extends Interacteble{
 
     private void buildInspectionString(int fl, int deapth, boolean isFirst) {
         if(!isFirst){
-            firstIStringInt = ThreadLocalRandom.current().nextInt(0,InteractbleStrings.rIFCONQ.length);
+            firstIStringInt = ThreadLocalRandom.current().nextInt(0, InteractbleStrings.rIFCONQ.length);
             inspectionString += InteractbleStrings.rIFCONQ[firstIStringInt];
         }
     }
