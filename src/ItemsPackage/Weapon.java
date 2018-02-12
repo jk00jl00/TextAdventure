@@ -40,6 +40,7 @@ public class Weapon extends Equipment {
         getWClass();
         getDmg(fl, de);
         getStats(fl, de);
+        getName();
         /*setMaxDmg(5);
         this.type = "MainHand";
         this.minDmg = 1;
@@ -55,12 +56,38 @@ public class Weapon extends Equipment {
         */
     }
 
-    private void getStats(int fl, int de) {
-
+    private void getName() {
+        switch (this.wClass){
+            case "Dagger":
+                this.description = "a dagger";
+                break;
+            case "LSword":
+                this.description = "a long sword";
+                break;
+            case "SSword":
+                this.description = "a short sword";
+                break;
+            case "Shield":
+                this.description = "a shield";
+                break;
+        }
     }
 
-    public void setMaxDmg(int dmg) {
-        this.maxDmg = dmg;
+    private void getStats(int fl, int de) { 
+        switch(this.wClass){
+            case "Dagger":
+                this.stats.put("Dexterity", ThreadLocalRandom.current().nextInt(0, (1 + fl) * de));
+                break;
+            case "LSword":
+                this.stats.put("Strength", ThreadLocalRandom.current().nextInt(0, (1 + fl) * de));
+                break;
+            case "SSword":
+                this.stats.put("Luck", ThreadLocalRandom.current().nextInt(0, (1 + fl) * de));
+                break;
+            case "Shield":
+                this.stats.put("Stamina", ThreadLocalRandom.current().nextInt(0, (1 + fl) * de));
+                break;
+        }
     }
 
     public void setDescription(String description) {

@@ -14,9 +14,18 @@ public class Player {
     Map<String, Equipment> equipped = new HashMap<>();
     public Map<String, Integer> stats = new HashMap<>();
 
+    int maxHealth;
+    int currentHealth;
+    int maxActionPoints;
+    int currentActionPoints;
+
     public Gold gold = Gold.playerGold;
 
     public Player(){
+        this.maxHealth = 10;
+        this.currentHealth = 10;
+        this.maxActionPoints = 2;
+        this.currentActionPoints = 2;
         this.setStats();
         this.setEquipment();
     }
@@ -56,7 +65,18 @@ public class Player {
             }
         }
         tempEquip.clear();
+        updateHealth();
+        updateActionPoints();
         return true;
+    }
+
+    private void updateActionPoints() {
+        this.maxActionPoints = 2 + (this.stats.get("Dexterity") - 10) / 2;
+        this.currentActionPoints = maxActionPoints;
+    }
+
+    private void updateHealth() {
+        this.maxActionPoints = 2 + (this.stats.get("Stamina") - 10) / 2;
     }
 
     private void addStats(Equipment equipment){
@@ -69,6 +89,8 @@ public class Player {
 
     public void changeStat(String s, int c){
         this.stats.replace(s, this.stats.get(s) + c);
+        updateHealth();
+        updateActionPoints();
     }
 
     private void removeStats(Equipment equipment){

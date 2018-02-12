@@ -200,15 +200,22 @@ public class Gui extends JFrame{
     public void setDefaultText() {
     }
 
-    public void changeStats(Map<String, Integer> map) {
+    public void changeStats(Player player) {
         this.charStats.setText("\n\n\n\n\n\n\n\n");
-        for(String s: map.keySet()){
+        for(String s: player.stats.keySet()){
             try {
 
-                charStats.getStyledDocument().insertString(charStats.getStyledDocument().getLength(), s + ": " + map.get(s) + "\n", keySet);
+                charStats.getStyledDocument().insertString(charStats.getStyledDocument().getLength(), s + ": " + player.stats.get(s) + "\n", keySet);
             } catch (BadLocationException e) {
                 e.printStackTrace();
             }
+        }
+
+        try {
+            charStats.getStyledDocument().insertString(charStats.getStyledDocument().getLength(), "\nHp: " + player.currentHealth + "/" + player.maxHealth + "\n", keySet);
+            charStats.getStyledDocument().insertString(charStats.getStyledDocument().getLength(), "Ap: " + player.currentActionPoints + "/" + player.maxActionPoints , keySet);
+        } catch (BadLocationException e) {
+            e.printStackTrace();
         }
     }
 

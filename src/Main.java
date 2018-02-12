@@ -47,7 +47,7 @@ public class Main implements InteractionListener {
     }
 
     private void onStart() {
-        gui.changeStats(player.stats);
+        gui.changeStats(player);
         onNewFloor();
         addListeners();
         onEnterRoom(rooms[0]);
@@ -341,7 +341,7 @@ public class Main implements InteractionListener {
                             Item i = Inventory.getItem(Integer.parseInt(iI.group()) - 1);
                             if(player.equip((Equipment)Inventory.getItem(Integer.parseInt(iI.group()) - 1), true)){
                                 gui.addToEvents("You equipped " + i.description);
-                                gui.changeStats(player.stats);
+                                gui.changeStats(player);
                             }
                         } catch (IndexOutOfBoundsException e1) {
                             e1.printStackTrace();
@@ -395,27 +395,27 @@ public class Main implements InteractionListener {
                 switch(sM.group()){
                     case "str":
                         player.changeStat("Strength", change);
-                        gui.changeStats(player.stats);
+                        gui.changeStats(player);
                         break;
                     case "sta":
                         player.changeStat("Stamina", change);
-                        gui.changeStats(player.stats);
+                        gui.changeStats(player);
                         break;
                     case "dex":
                         player.changeStat("Dexterity", change);
-                        gui.changeStats(player.stats);
+                        gui.changeStats(player);
                         break;
                     case "luc":
                         player.changeStat("Luck", change);
-                        gui.changeStats(player.stats);
+                        gui.changeStats(player);
                         break;
                     case "int":
                         player.changeStat("Intelligence", change);
-                        gui.changeStats(player.stats);
+                        gui.changeStats(player);
                         break;
                     case "wis":
                         player.changeStat("Wisdom", change);
-                        gui.changeStats(player.stats);
+                        gui.changeStats(player);
                         break;
 
                 }
