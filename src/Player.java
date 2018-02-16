@@ -1,27 +1,28 @@
 import InteracteblesPackage.Room;
 import ItemsPackage.Equipment;
 import ItemsPackage.Gold;
+import ItemsPackage.Weapon;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Player {
+class Player {
 
-    public Room inside;
+    Room inside;
 
-    ArrayList<Equipment> tempEquip = new ArrayList<>();
+    private ArrayList<Equipment> tempEquip = new ArrayList<>();
     Map<String, Equipment> equipped = new HashMap<>();
-    public Map<String, Integer> stats = new HashMap<>();
+    Map<String, Integer> stats = new HashMap<>();
 
     int maxHealth;
     int currentHealth;
     int maxActionPoints;
     int currentActionPoints;
 
-    public Gold gold = Gold.playerGold;
+    Gold gold = Gold.playerGold;
 
-    public Player(){
+    Player(){
         this.maxHealth = 10;
         this.currentHealth = 10;
         this.maxActionPoints = 2;
@@ -31,8 +32,9 @@ public class Player {
     }
 
     private void setEquipment() {
+        equipped.put("mainhand", Weapon.fist);
+        equipped.put("offhand", Weapon.fist);
 
-        equipped.put("MainHand", null);
     }
 
     private void setStats() {
@@ -45,8 +47,8 @@ public class Player {
     }
 
 
-    public boolean equip(Equipment e, boolean fromInv){
-        if (this.equipped.get(e.type) != null) {
+    boolean equip(Equipment e, boolean fromInv){
+        if (this.equipped.get(e.type).equals(Weapon.fist)) {
             this.tempEquip.add(this.equipped.get(e.type));
         } else {
             this.tempEquip.clear();
@@ -59,7 +61,7 @@ public class Player {
         if(fromInv){
             Inventory.removeFromInv(e);
         }
-        if (this.tempEquip.size() > 0) {
+        if (this.tempEquip.size() > 0 && !tempEquip.get(0).equals(Weapon.fist)) {
             if(!Inventory.addToInv(tempEquip.get(0))){
                 System.out.println("Full inventory on equip");
             }
@@ -87,7 +89,7 @@ public class Player {
         }
     }
 
-    public void changeStat(String s, int c){
+    void changeStat(String s, int c){
         this.stats.replace(s, this.stats.get(s) + c);
         updateHealth();
         updateActionPoints();
@@ -99,10 +101,10 @@ public class Player {
         }
     }
 
-    public boolean unEquip(String item) {
-        if(equipped.get(item).equals(null)) return false;
+    boolean unEquip(String item) {
+        if(equipped.get(item).equals(Weapon.fist)) return false;
         Inventory.addToInv(equipped.get(item));
-        equipped.replace(item, null);
+        equipped.replace(item, Weapon.fist);
         return true;
     }
 }

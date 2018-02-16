@@ -7,11 +7,11 @@ import java.util.ArrayList;
 
 public class Room{
 
-    public int distance;
-    public int roomNumber;
+    int distance;
+    int roomNumber;
     public boolean isFilled = false;
-    public int x;
-    public int y;
+    int x;
+    int y;
     private int floor;
 
     public ArrayList<String> description = new ArrayList<>();
@@ -21,7 +21,7 @@ public class Room{
     public ArrayList<Interacteble> interactebles = new ArrayList<>();
 
 
-    public Room(int x, int y, int fl, int dis, int rn){
+    Room(int x, int y, int fl, int dis, int rn){
         this.x = x;
         this.y = y;
         this.distance = dis;
@@ -32,7 +32,7 @@ public class Room{
 
     }
 
-    public void addDoor(Door d){
+    void addDoor(Door d){
         doors.add(d);
     }
 
@@ -42,41 +42,35 @@ public class Room{
 
     @Override
     public String toString() {
-        String s = new String("");
-        s += "Room " + this.roomNumber + " at " + "x: " + this.x + ",  y: " + this.y + ", Distance: " + this.distance + ".\n";
+        StringBuilder sb = new StringBuilder();
+        sb.append("Room ").append(this.roomNumber).append(" at ").append("x: ").append(this.x).append(",  y: ").append(this.y).append(", Distance: ").append(
+                this.distance).append(".\n");
         for(int i = 0; i < doors.size(); i++){
-            s += "Door " + i + ": dir in 1: " + doors.get(i).dirInRoomOne + "(" + doors.get(i).connects[0].roomNumber + ")"
-                    +", in 2: " + doors.get(i).dirInRoomTwo + "(" + doors.get(i).connects[1].roomNumber + ")" + ".\n";
+            sb.append("Door ").append(i).append(": dir in 1: ").append(doors.get(i).dirInRoomOne).append("(").append(
+                    doors.get(i).connects[0].roomNumber).append(")").append(", in 2: ").append(doors.get(i).dirInRoomTwo).append(
+                            "(").append(doors.get(i).connects[1].roomNumber).append(")").append(".\n");
         }
         if(this.interactebles.size() > 0){
             for(Interacteble i: this.interactebles){
-                s += i.id;
+                sb.append(i.id);
             }
         }
-        s += "\n";
-        return s;
+        sb.append("\n");
+        return sb.toString();
     }
 
-    public boolean hasDoorInDir(char c){
+    boolean hasDoorInDir(char c){
         for(Door d : doors){
-            if(d.connects[0].equals(this)){
-                if(d.dirInRoomOne == c){
-                    return true;
-                } else{
-                    return true;
-                }
-            }else{
-                if(d.dirInRoomTwo == c){
-                    return true;
-                } else{
-                    return false;
-                }
+            if(d.connects[0].equals(this) && d.dirInRoomOne == c){
+                return true;
+            }else if(d.connects[1].equals(this) && d.dirInRoomTwo == c){
+                return true;
             }
         }
         return false;
     }
 
-    public void addDescription(String s) {
+    void addDescription(String s) {
         this.description.add(s);
     }
 }

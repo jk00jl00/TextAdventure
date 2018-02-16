@@ -1,12 +1,14 @@
 import ItemsPackage.Item;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Inventory {
     private static ArrayList<Item> inventory = new ArrayList<>();
-    public static int maxSize = 10;
+    private static int maxSize = 10;
 
-    public static boolean addToInv(Item i){
+    static boolean addToInv(Item i){
         if(inventory.size() < maxSize){
             inventory.add(i);
             return true;
@@ -15,31 +17,31 @@ public class Inventory {
         }
     }
 
-    public static  boolean removeFromInv(Item i){
+    static boolean removeFromInv(Item i){
         inventory.remove(i);
         return true;
     }
 
-    public static String[] invToStringArray(){
-        String[] s = new String[maxSize + 1];
+    static ArrayList<String> invToStringArray(){
+        ArrayList<String> s = new ArrayList<>();
         if(inventory.size() == 0){
-            s[0] = "Your Inventory is empty";
+            s.add("Your Inventory is empty");
 
             return s;
         }
-        s[0] = "Your inventory contains:\n";
+        s.add("Your inventory contains:\n");
         for(int i = 1; i < maxSize + 1; i++){
             if (i < inventory.size() + 1) {
-                s[i] = "Slot "+ i + ": " + inventory.get(i - 1).description + "\n";
+                s.add("Slot "+ i + ": " + inventory.get(i - 1).description + "\n");
             } else{
-                s[i] = "Slot " + i + ": Empty \n";
+                s.add("Slot " + i + ": Empty \n");
             }
         }
 
         return s;
     }
 
-    public static int getSize(){
+    static int getSize(){
         return inventory.size();
     }
 
@@ -47,7 +49,7 @@ public class Inventory {
         return inventory.toArray(new Item[inventory.size()]);
     }
 
-    public static Item getItem(int i) {
+    static Item getItem(int i) {
         return inventory.get(i);
     }
 }

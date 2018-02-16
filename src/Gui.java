@@ -1,34 +1,36 @@
-import InteracteblesPackage.Room;
-
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-import java.util.Map;
 
 public class Gui extends JFrame{
 
     private static Gui frame;
     private static final int maxNumberOfCharacters = 30;
     private static final int numberOfRowsInEventLog = 20;
-    private static final String spacesFromTop = "\n \n \n \n \n \n";
     private SimpleAttributeSet keySet;
     private SimpleAttributeSet forSpaces;
-    private JTextPane charStats;
+    private JTextPane charInfo;
     private JTextPane playerInput;
     private JTextPane eventLog;
-    private String[] events = new String[numberOfRowsInEventLog];
     private JTextPane roomInteractebles;
     private JTextPane enemyStats;
     private JTextPane map;
     private JTextPane options;
-    public boolean isWaiting;
+    private static final String spacesFromTop = "\n \n \n \n \n \n";
+    private String[] events = new String[numberOfRowsInEventLog];
     private ArrayList<String> waitingStrings;
-    private String inven;
-    private String[] eventsBackUp;
+    private ArrayList<String> inventoryDiplay = new ArrayList<>();
+    private ArrayList<String> charStatsDisplay = new ArrayList<>();
+    private ArrayList<String> equippedDisplay = new ArrayList<>();
+     int currentDisplayInCharstats = 2; //0 Char stats 1 inventory 2 equipped (Cycles at start)
 
-    public Gui(){
+
+    boolean isWaiting;
+
+    Gui(){
         super("Text Adventure");
         frame = this;
 
@@ -63,21 +65,21 @@ public class Gui extends JFrame{
 
 
     private void createUIComponents() {
-        charStats = new JTextPane();
+        charInfo = new JTextPane();
 
         GridBagConstraints gbc = new GridBagConstraints();
 
         gbc.fill = GridBagConstraints.BOTH;
-        charStats.setPreferredSize(new Dimension(280,460));
-        charStats.setFocusable(false);
-        charStats.setBackground(Color.DARK_GRAY);
-        charStats.setForeground(Color.LIGHT_GRAY);
-        charStats.setBorder(BorderFactory.createBevelBorder(0));
+        charInfo.setPreferredSize(new Dimension(280,460));
+        charInfo.setFocusable(false);
+        charInfo.setBackground(Color.DARK_GRAY);
+        charInfo.setForeground(Color.LIGHT_GRAY);
+        charInfo.setBorder(BorderFactory.createBevelBorder(0));
 
-        StyledDocument charStatsDoc = charStats.getStyledDocument();
+        StyledDocument charStatsDoc = charInfo.getStyledDocument();
         charStatsDoc.setParagraphAttributes(0, charStatsDoc.getLength(), keySet, false);
 
-        frame.add(charStats, gbc);
+        frame.add(charInfo, gbc);
         gbc = new GridBagConstraints();
 
 
@@ -197,29 +199,26 @@ public class Gui extends JFrame{
 
     }
 
-    public void setDefaultText() {
+    void setDefaultText() {
     }
 
-    public void changeStats(Player player) {
-        this.charStats.setText("\n\n\n\n\n\n\n\n");
+    void changeStats(Player player) {
+        inventoryDiplay.clear();
+        equippedDisplay.clear();
+        charStatsDisplay.clear();
+        this.inventoryDiplay = Inventory.invToStringArray();
+        for(String s: player.equipped.keySet()){
+            this.equippedDisplay.add(s + ": " + player.equipped.get(s).description + "\n");
+        }
         for(String s: player.stats.keySet()){
-            try {
-
-                charStats.getStyledDocument().insertString(charStats.getStyledDocument().getLength(), s + ": " + player.stats.get(s) + "\n", keySet);
-            } catch (BadLocationException e) {
-                e.printStackTrace();
-            }
+            charStatsDisplay.add(s + ": " + player.stats.get(s) + "\n");
         }
-
-        try {
-            charStats.getStyledDocument().insertString(charStats.getStyledDocument().getLength(), "\nHp: " + player.currentHealth + "/" + player.maxHealth + "\n", keySet);
-            charStats.getStyledDocument().insertString(charStats.getStyledDocument().getLength(), "Ap: " + player.currentActionPoints + "/" + player.maxActionPoints , keySet);
-        } catch (BadLocationException e) {
-            e.printStackTrace();
-        }
+        charStatsDisplay.add("\nHp: " + player.currentHealth + "/" + player.maxHealth + "\n");
+        charStatsDisplay.add("Ap: " + player.currentActionPoints + "/" + player.maxActionPoints);
+        updateCharStats(false, true);
     }
 
-    public void updateEventLog(String newLine){
+    private void updateEventLog(String newLine){
         eventLog.setText("");
         try {
             eventLog.getStyledDocument().insertString(0, spacesFromTop, forSpaces);
@@ -265,25 +264,24 @@ public class Gui extends JFrame{
         }
     }
 
-    public String getInputText() {
+    String getInputText() {
         return playerInput.getText();
     }
 
-    public void clearEventLog() {
+    void clearEventLog() {
         eventLog.setText(events[0]);
         for(int i = 0; i < numberOfRowsInEventLog; i++){
             events[i] = " \n";
         }
-        return;
     }
 
-    public void clearInput() {
+    void clearInput() {
         playerInput.setText("");
     }
 
-    public void changeEnterAction(Main.OnEnter onEnter, Main.OnShiftEnter onShiftEnter) {
+    void changeEnterAction(Main.OnEnter onEnter, Main.OnShiftEnter onShiftEnter) {
         KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-        KeyStroke sEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 1);
+        KeyStroke sEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.SHIFT_DOWN_MASK);
         String enterBinding = enter.toString();
         String sEnterBinding = sEnter.toString();
 
@@ -296,17 +294,13 @@ public class Gui extends JFrame{
         actionMap.put(enterBinding, onEnter);
     }
 
-    public void clearEvents() {
+    void clearEvents() {
         for(int i = 0; i < numberOfRowsInEventLog; i++){
             events[i] = " \n";
         }
     }
 
-    public void displayInteractions(Room roomEntered) {
-
-    }
-    
-    public void addToEvents(String s){
+    void addToEvents(String s){
          ArrayList<String> stringsToAdd = new ArrayList<>();
         if((float)s.length() / 40.0f > 1.0f){
             stringsToAdd = splitString(s);
@@ -320,10 +314,9 @@ public class Gui extends JFrame{
             }
             isWaiting = true;
             waitingStrings = stringsToAdd;
-            return;
         } else{
-            for(int i = 0; i < stringsToAdd.size(); i++){
-                updateEventLog(stringsToAdd.get(i));
+            for(String i: stringsToAdd){
+                updateEventLog(i);
             }
             stringsToAdd.clear();
         }
@@ -350,14 +343,13 @@ public class Gui extends JFrame{
         return strings;
     }
 
-    public void waitOver() {
+    void waitOver() {
         if(waitingStrings.size() > numberOfRowsInEventLog){
             for(int i = 0; i < numberOfRowsInEventLog; i++){
                 updateEventLog(waitingStrings.get(0));
                 waitingStrings.remove(0);
             }
             isWaiting = true;
-            return;
         } else{
             for(int i = 0; i < waitingStrings.size(); i++){
                 updateEventLog(waitingStrings.get(0));
@@ -367,16 +359,84 @@ public class Gui extends JFrame{
         }
     }
 
-    public void enterInven() {
-        eventsBackUp = events;
-        events = Inventory.invToStringArray();
-        updateEventLog();
-        return;
+    void updateCharStats(boolean backwards){
+        updateCharStats(backwards, false);
+    }
+    void updateCharStats(boolean backwards, boolean noCycle) {
+        if (!backwards) {
+            switch(currentDisplayInCharstats){
+                case 0:
+                    if(noCycle){
+                        setCharStatsToArray(charStatsDisplay);
+                        return;
+                    }
+                    setCharStatsToArray(inventoryDiplay);
+                    currentDisplayInCharstats++;
+                    return;
+                case 1:
+                    if(noCycle){
+                        setCharStatsToArray(inventoryDiplay);
+                        return;
+                    }
+                    setCharStatsToArray(equippedDisplay);
+                    currentDisplayInCharstats++;
+                    return;
+                case 2:
+                    if(noCycle){
+                        setCharStatsToArray(equippedDisplay);
+                        return;
+                    }
+                    setCharStatsToArray(charStatsDisplay);
+                    currentDisplayInCharstats = 0;
+            }
+        } else{
+            switch(currentDisplayInCharstats){
+                case 0:
+                    if(noCycle) {
+                        setCharStatsToArray(charStatsDisplay);
+                        return;
+                    }
+                    setCharStatsToArray(equippedDisplay);
+                    currentDisplayInCharstats = 2;
+                    return;
+                case 1:
+                    if(noCycle){
+                        setCharStatsToArray(inventoryDiplay);
+                        return;
+                    }
+                    setCharStatsToArray(charStatsDisplay);
+                    currentDisplayInCharstats--;
+                    return;
+                case 2:
+                    if(noCycle){
+                        setCharStatsToArray(equippedDisplay);
+                        return;
+                    }
+                    setCharStatsToArray(inventoryDiplay);
+                    currentDisplayInCharstats--;
+            }
+        }
     }
 
+    private void setCharStatsToArray(ArrayList<String> str) {
+        charInfo.setText("");
+        try {
+            charInfo.getStyledDocument().insertString(0, spacesFromTop, forSpaces);
+        } catch (BadLocationException e) {
+            e.printStackTrace();
+        }
 
-    public void exitInve() {
-        events = eventsBackUp;
-        updateEventLog();
+        try {
+            for(String a : str){
+                try {
+                    charInfo.getStyledDocument().insertString(charInfo.getStyledDocument().getLength(), a, keySet);
+
+                } catch (BadLocationException e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (java.lang.NullPointerException e) {
+            e.printStackTrace();
+        }
     }
 }

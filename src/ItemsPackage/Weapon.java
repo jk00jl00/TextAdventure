@@ -5,17 +5,31 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Weapon extends Equipment {
 
     public static Weapon starter = new Weapon();
-    String wClass;
-    int minDmg;
-    int maxDmg;
-    boolean mainHand = false;
-    boolean offHand = false;
-    boolean canChange = false;
-    boolean twoHanded = false;
-    boolean isShield = false;
+    public static Weapon fist = new Weapon();
 
-    String[] types = {"MainHand", "OffHand"};
-    String[][] wClasses = {
+    static{
+        fist.wClass = "Dagger";
+        fist.description = "Your trusty fist";
+        fist.minDmg = 1;
+        fist.maxDmg = 1;
+        fist.canChange = true;
+        fist.isFist = true;
+        fist.twoHanded = false;
+        fist.value = 0;
+    }
+
+    private String wClass;
+    private int minDmg;
+    private int maxDmg;
+    private boolean mainHand = false;
+    private boolean offHand = false;
+    private boolean canChange = false;
+    private boolean twoHanded = false;
+    private boolean isShield = false;
+    private boolean isFist = false;
+
+    private String[] types = {"mainhand", "offhand"};
+    private String[][] wClasses = {
             {"LSword", "SSword", "Dagger"},
             {"Dagger", "Shield", "SSword"}
     };
@@ -24,9 +38,9 @@ public class Weapon extends Equipment {
         type = types[0];
         wClass = wClasses[0][0];
         this.minDmg = 1;
-        this.maxDmg = 1;
+        this.maxDmg = 3;
         this.mainHand = true;
-        this. twoHanded = true;
+        this.twoHanded = true;
         this.value = 1;
         this.setStats();
         for(String s: this.stats.keySet()){
@@ -56,6 +70,7 @@ public class Weapon extends Equipment {
         */
     }
 
+
     private void getName() {
         switch (this.wClass){
             case "Dagger":
@@ -73,7 +88,7 @@ public class Weapon extends Equipment {
         }
     }
 
-    private void getStats(int fl, int de) { 
+    private void getStats(int fl, int de) {
         switch(this.wClass){
             case "Dagger":
                 this.stats.put("Dexterity", ThreadLocalRandom.current().nextInt(0, (1 + fl) * de));
@@ -90,7 +105,7 @@ public class Weapon extends Equipment {
         }
     }
 
-    public void setDescription(String description) {
+    private void setDescription(String description) {
         this.description = description;
     }
 
@@ -128,16 +143,16 @@ public class Weapon extends Equipment {
     private void getDmg(int fl, int de) {
         switch(this.wClass) {
             case "LSword":
-                this.minDmg = 1 * (1 + fl * de);
-                this.maxDmg = 1 * (1 + fl * de) + de * (fl + 1);
+                this.minDmg = ++fl * de;
+                this.maxDmg = ++fl * de + de * ++fl;
                 break;
             case "SSword":
-                this.minDmg = 1 * (1 + fl);
-                this.maxDmg = 1 * (1 + fl) + de;
+                this.minDmg = ++fl;
+                this.maxDmg = ++fl + de;
                 break;
             case "Dagger":
-                this.minDmg = 1 * (fl);
-                this.maxDmg = 1 * (fl + 2) * de;
+                this.minDmg = fl;
+                this.maxDmg = (fl + 2) * de;
                 break;
             case "Shield":
                 this.minDmg = -1;
